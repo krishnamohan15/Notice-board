@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GEC Jamui Notice Board</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Orbitron:wght@500&display=swap" rel="stylesheet">
+
+<style>
+
+/* RESET */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+
+body{
+    background:linear-gradient(135deg,#0f172a,#020617);
+    color:white;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+}
+
+/* FLOATING ICONS */
+.floating{
+    position:absolute;
+    font-size:28px;
+    animation:float 6s ease-in-out infinite;
+}
+.f1{top:20%;left:8%;}
+.f2{top:60%;left:85%;}
+.f3{top:80%;left:20%;}
+@keyframes float{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-20px);}
+}
+
+/* HEADER */
+.header{
+    text-align:center;
+    padding:20px;
+}
+.logo{width:80px;margin-bottom:10px;}
+.college-name{font-size:28px;font-weight:700;}
+.sub{color:#94a3b8;}
+
+/* HERO */
+.hero{
+    text-align:center;
+    padding:30px;
+}
+.hero h1{
+    font-family:'Orbitron';
+    font-size:34px;
+    animation:fadeIn 1.5s ease;
+}
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(20px);}
+    to{opacity:1;}
+}
+
+/* NAV */
+.nav{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    padding:10px;
+}
+.nav a{color:#94a3b8;text-decoration:none;}
+.nav a:hover{color:#38bdf8;}
+
+/* SEARCH */
+.search{padding:15px;}
+.search input{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    border:none;
+}
+
+/* QUICK */
+.quick-section{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    flex-wrap:wrap;
+    padding:10px 20px;
+}
+.quick-card{
+    background:#1e293b;
+    padding:12px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:0.3s;
+}
+.quick-card:hover{
+    background:#38bdf8;
+    transform:scale(1.05);
+}
+
+/* FEATURED */
+.featured{
+    padding:20px;
+}
+.featured-row{
+    display:flex;
+    gap:15px;
+    overflow-x:auto;
+}
+
+/* GRID */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+    padding:20px;
+}
+
+/* CARD */
+.card{
+    background:#1e293b;
+    padding:15px;
+    border-radius:12px;
+    transition:0.3s;
+}
+.card:hover{
+    transform:translateY(-5px) scale(1.03);
+    box-shadow:0 0 20px #38bdf8;
+}
+
+.tag{font-size:12px;color:#38bdf8;}
+.title{font-weight:bold;}
+.date{font-size:12px;color:#94a3b8;}
+
+/* AI BUTTON */
+.ai-toggle{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:#38bdf8;
+    border:none;
+    padding:15px;
+    border-radius:50%;
+    cursor:pointer;
+}
+
+/* AI BOX */
+.ai-box{
+    position:fixed;
+    bottom:80px;
+    right:20px;
+    width:260px;
+    background:#1e293b;
+    padding:15px;
+    border-radius:10px;
+    display:none;
+}
+.ai-box input{
+    width:100%;
+    padding:8px;
+    border:none;
+    border-radius:5px;
+    margin-top:10px;
+}
+.ai-response{
+    margin-top:10px;
+    color:#38bdf8;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- FLOATING ICONS -->
+<div class="floating f1">📚</div>
+<div class="floating f2">✏️</div>
+<div class="floating f3">🎓</div>
+
+<!-- HEADER -->
+<div class="header">
+    <img src="logo.png" class="logo">
+    <div class="college-name">🎓 Government Engineering College, Jamui</div>
+    <div class="sub">📢 Digital Notice Board</div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+    <h1>Stay Updated 📡</h1>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+    <a href="#">🏠 Home</a>
+    <a href="#">🏫 Departments</a>
+    <a href="#">📄 Notices</a>
+</div>
+
+<!-- SEARCH -->
+<div class="search">
+    <input type="text" id="search" placeholder="🔍 Search notices...">
+</div>
+
+<!-- QUICK ACTIONS -->
+<div class="quick-section">
+    <div class="quick-card">📢 Latest</div>
+    <div class="quick-card">📅 Calendar</div>
+    <div class="quick-card">📝 Exams</div>
+    <div class="quick-card">💼 Placements</div>
+</div>
+
+<!-- FEATURED -->
+<div class="featured">
+    <h2>🔥 Important Notices</h2>
+    <div class="featured-row" id="featuredRow"></div>
+</div>
+
+<!-- GRID -->
+<div class="grid" id="grid"></div>
+
+<!-- AI -->
+<button class="ai-toggle" onclick="toggleAI()">🤖</button>
+
+<div class="ai-box" id="aiBox">
+    <b>🤖 Ask AI</b>
+    <input type="text" id="aiInput" placeholder="Ask about notices...">
+    <div class="ai-response" id="aiResponse"></div>
+</div>
+
+<script>
+
+const notices=[
+{title:"Mid Sem Exam 📘",category:"Exams",date:"10 Apr"},
+{title:"Hackathon 🚀",category:"Events",date:"12 Apr"},
+{title:"AI Lab Opening 🤖",category:"Academics",date:"8 Apr"},
+{title:"TCS Drive 💼",category:"Placements",date:"14 Apr"},
+{title:"Holiday Notice 🎉",category:"Academics",date:"13 Apr"}
+];
+
+function show(data){
+    let g=document.getElementById("grid");
+    g.innerHTML="";
+    data.forEach(n=>{
+        g.innerHTML+=`
+        <div class="card">
+            <div class="tag">📌 ${n.category}</div>
+            <div class="title">${n.title}</div>
+            <div class="date">📅 ${n.date}</div>
+        </div>`;
+    });
+}
+
+function showFeatured(){
+    let row=document.getElementById("featuredRow");
+    row.innerHTML="";
+    notices.slice(0,3).forEach(n=>{
+        row.innerHTML+=`
+        <div class="card">
+            <div class="tag">🔥 ${n.category}</div>
+            <div class="title">${n.title}</div>
+            <div class="date">${n.date}</div>
+        </div>`;
+    });
+}
+
+document.getElementById("search").addEventListener("keyup",function(){
+    let v=this.value.toLowerCase();
+    show(notices.filter(n=>n.title.toLowerCase().includes(v)));
+});
+
+function toggleAI(){
+    let box=document.getElementById("aiBox");
+    box.style.display = box.style.display==="block" ? "none":"block";
+}
+
+document.getElementById("aiInput").addEventListener("keypress",function(e){
+    if(e.key==="Enter"){
+        let q=this.value.toLowerCase();
+        let res="No info found";
+        notices.forEach(n=>{
+            if(q.includes(n.category.toLowerCase())){
+                res="Latest "+n.category+": "+n.title;
+            }
+        });
+        document.getElementById("aiResponse").innerText=res;
+    }
+});
+
+show(notices);
+showFeatured();
+
+</script>
+
+</body>
+</html>
